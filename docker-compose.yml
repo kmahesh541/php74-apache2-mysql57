@@ -1,0 +1,49 @@
+version: '3'
+services:
+  mysql:
+    image: mysql:5.7
+    environment:
+      - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}
+    volumes:
+      - ./telemysql_data:/var/lib/mysql
+      - /var/www/html:/var/www/html
+      #- ./my1.cnf:/etc/mysql/my.cnf # Map the custom configuration
+    ports:
+      - "3307:3306"  # Map port 3307 on the host to port 3306 in the container
+    restart: unless-stopped
+    networks:
+      - my_php_network
+
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    environment:
+      - UPLOAD_LIMIT=512M
+      - PMA_HOST=mysql
+    #links:
+    #  - mysql:db
+    depends_on:
+      - mysql
+    ports:
+      - "99:80"
+    restart: unless-stopped
+    networks:
+      - my_php_network
+
+  my_apache_php:
+    image: my_apache2_php74_image #docker.io/kmahesh541/php5-apache2-mysql5
+    volumes:
+      - /var/www/html:/var/www/html
+      - /var/www:/var/www
+    ports:
+      - "88:80"
+    environment:
+      - MYSQL_HOST=${MYSQL_HOST}
+      - MYSQL_PORT=${MYSQL_PORT}
+    restart: always
+    networks:
+      - my_php_network
+
+networks:
+  my_php_network:
+    driver: bridge
+
