@@ -30,7 +30,7 @@ services:
       - my_php_network
 
   my_apache_php:
-    image: my_apache2_php74_image #docker.io/kmahesh541/php5-apache2-mysql5
+    image: docker.io/kmahesh541/php74-apache2-mysql57:latest
     volumes:
       - /var/www/html:/var/www/html
       - /var/www:/var/www
